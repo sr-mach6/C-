@@ -1,0 +1,401 @@
+// ConsoleApplication1.cpp : Defines the entry point for the console application.
+//  main.cpp
+//  FinancialCalulator(s)
+
+#include "stdafx.h"
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <cmath>
+#include <locale>
+#include <fstream>
+#include <cstdlib>
+
+using namespace std;
+
+//function prototypes
+void investmentCalculator();
+void fRateMortageLoanCalc();
+void carLoanCalculator();
+void displayMenu();
+
+//global variables
+const double E = 2.718281828;
+
+int main()
+{
+	int option;
+	string decision;
+	do {
+		displayMenu();
+		cin >> option;
+		while (option > 4)
+		{
+			cout << "Invalid input. Please select one of the options above: ";
+			cin >> option;
+		}
+		cout << "\n";
+		if (option == 1)
+		{
+			investmentCalculator();
+		}
+		else if (option == 2)
+		{
+			fRateMortageLoanCalc();
+		}
+		else if (option == 3)
+		{
+			carLoanCalculator();
+		}
+		else if (option == 4)
+		{
+			break;
+		}
+		cout << "Would you like to make another calculation? (y/n): ";
+		cin >> decision;
+		cout << "\n";
+		system("cls");
+	} while (decision == "y" || decision == "Y");
+
+	system("Pause");
+	return 0;
+}
+
+//Investment Calculator
+void investmentCalculator()
+{
+	//variables
+	string fName, lName, middleI, fullName, option2;
+	double investment, annualRate, total, sum = 0.0, one, two;
+	int years;
+
+	cout << "Investment Calculator \n" << endl;
+	cout << "What is your first name: ";
+	cin >> fName;
+	cout << "What is your middle name/or initial: ";
+	cin >> middleI;
+	cout << "What is your last name: ";
+	cin >> lName;
+	fullName = fName + lName;
+	cout << "\n";
+	cout << "Amount you want to invest: " << "$";
+	cin >> investment;
+	sum = investment;
+	const double IV = investment;
+	cout << "\n";
+	cout << "Average annual rate of return (decimal format): ";
+	cin >> annualRate;
+	while (annualRate > 1 || annualRate < 0)
+	{
+		cout << "Invalid Input. Please enter in decimal format: ";
+		cin >> annualRate;
+	}
+	cout << "\n";
+	cout << "Time period (years): ";
+	cin >> years;
+	cout << "\n";
+
+	//Calculation
+	std::cout.imbue(std::locale(""));
+	cout << setprecision(2) << fixed;
+	total = investment * pow(E, annualRate * years);
+
+	cout << fName << " " << middleI << " " << lName << endl;
+	cout << "Total Value Investment: $" << total << endl << endl;
+	cout << "Would you like to see a table of growth of the Investment? (y/n) ";
+	cin >> option2;
+	cout << "\n";
+	if (option2 == "y" || option2 == "Y")
+	{
+		cout << left << setw(7) << "Year" << setw(24) << "Beginning Investment" << setw(17) << "New Investment" << setw(16) << "Amount Earned" << "Total of Earnings" << endl;
+		one = investment;
+		for (int i = 1; i <= years; i++)
+		{
+			//calculation for every year
+			two = investment * pow(E, (annualRate * i));
+			sum += two - one;
+			cout << left << setw(7) << i << right << setw(1) << "$" << right << setw(19) << one << right << setw(5) << "$" << right << setw(13) << two << right << setw(4) << "$" << right << setw(12) << (two - one) << setw(4) << "$" << setw(16) << sum << endl;
+
+			if ((i % 45) == 0)
+			{
+				cout << endl;
+				system("Pause");
+				cout << endl;
+				if (i == years)
+					break;
+				cout << left << setw(7) << "Year" << setw(24) << "Beginning Investment" << setw(17) << "New Investment" << setw(16) << "Amount Earned" << "Total of Earnings" << endl;
+			}
+			one = two;
+		}
+		cout << "Do you wish to save this information into a file? (y/n) ";
+		cin >> option2;
+		if (option2 == "y" || option2 == "Y")
+		{
+			ofstream outFile;
+			outFile.open(fullName + ".txt");
+			outFile << fName << " " << middleI << " " << lName << endl;
+			outFile << setprecision(2) << fixed;
+			outFile << "Total Value of Investment: " << "$" << total << endl << endl;
+
+			investment = IV;
+			total = investment * pow(E, annualRate * years);
+			sum = IV;
+			one = IV;
+			two = 0.0;
+			outFile << left << setw(7) << "Year" << setw(24) << "Beginning Investment" << setw(17) << "New Investment" << setw(16) << "Amount Earned" << "Total of Earnings" << endl;
+			for (int i = 1; i <= years; i++)
+			{
+				//calculation for every year
+				two = investment * pow(E, (annualRate * i));
+				sum += two - one;
+				outFile << left << setw(7) << i << fixed << setprecision(2) << right << setw(20) << one << right << setw(18) << two << right << setw(16) << (two - one) << setw(20) << sum << endl;
+				one = two;
+			}
+
+			outFile.close();
+			cout << "\nYour information is officialy stored in the text file: " << fullName << ".txt" << endl << endl;
+		}
+		else
+		{
+			cout << "\n";
+		}
+	}
+	else
+	{
+		cout << "\n";
+	}
+}
+
+//Fixed-rate Mortage Loan Calculator
+void fRateMortageLoanCalc()
+{
+	//variables
+	string fName, middleI, lName, fullName, option2;
+	double  annualRate, loanAmount, monthlyIA, principleAmount, newBalance, months, amountP, amountL;
+	int years;
+
+	cout << "Fixed-Rate Mortage Loan Calculator \n" << endl;
+	cout << "What is your first name: ";
+	cin >> fName;
+	cout << "What is your middle name/or initial: ";
+	cin >> middleI;
+	cout << "What is your last name: ";
+	cin >> lName;
+	fullName = fName + lName;
+	cout << "\n";
+	cout << "Loan amount: " << "$";
+	cin >> loanAmount;
+	double const LA = loanAmount;
+	cout << "\n";
+	const double AM = loanAmount;
+	cout << "Interest Rate (decimal format): ";
+	cin >> annualRate;
+	while (annualRate > 1 || annualRate < 0)
+	{
+		cout << "Invalid Input. Please enter in decimal format: ";
+		cin >> annualRate;
+	}
+	cout << "\n";
+	cout << "Time period (in years): ";
+	cin >> years;
+	months = years * 12;
+	cout << "\n";
+
+	//Calculations
+	double annualRate12 = annualRate / 12;
+	double MONTHLYPAYMENT = AM * (((annualRate12 * pow(1 + annualRate12, months)) / (pow(1 + annualRate12, months) - 1)));
+
+	std::cout.imbue(std::locale(""));
+	cout << fName << " " << middleI << " " << lName << endl;
+	cout << fixed << setprecision(2);
+	cout << "Monthly Payment: $" << MONTHLYPAYMENT << endl << endl;
+	cout << "Would you like to see an amortization table? (y/n) ";
+	cin >> option2;
+	cout << "\n";
+
+	if (option2 == "y" || option2 == "Y")
+	{
+		cout << left << setw(17) << "Payment Number" << setw(15) << "Loan Balance" << setw(17) << "Monthly Payment" << setw(18) << "Interest Amount" << setw(19) << "Principle Amount" << "New Balance" << endl;
+		for (int i = 1; i <= months; i++)
+		{
+			monthlyIA = annualRate12 * loanAmount;
+			principleAmount = MONTHLYPAYMENT - monthlyIA;
+			newBalance = abs(loanAmount - principleAmount);
+			std::cout.imbue(std::locale(""));
+			cout << left << setw(17) << i << setw(1) << "$" << right << setw(11) << loanAmount << right << setw(4) << "$" << setw(14) << MONTHLYPAYMENT << right << setw(3) << "$" << right << setw(14) << monthlyIA << right << setw(4) << "$" << setw(15) << principleAmount << right << setw(4) << "$" << setw(10) << newBalance << endl;
+			if ((i % 45) == 0)
+			{
+				//the issue is somewhere here
+				cout << endl;
+				system("Pause");
+				cout << "\n";
+				if (i == months)
+					break;
+				cout << left << setw(17) << "Payment Number" << setw(15) << "Loan Balance" << setw(17) << "Monthly Payment" << setw(18) << "Interest Amount" << setw(19) << "Principle Amount" << "New Balance" << endl;
+			}
+			loanAmount = newBalance;
+		}
+		amountP = months * MONTHLYPAYMENT;
+		amountL = (months * MONTHLYPAYMENT) - LA; 
+		
+		cout << "You payed $" << amountP << " and you lost $" << amountL << endl << endl;
+
+		cout << "Do you wish to save this information into a file? (y/n): ";
+		cin >> option2;
+		if (option2 == "y" || option2 == "Y")
+		{
+			ofstream outFile;
+			outFile.open(fullName + ".txt");
+			outFile << fName << " " << middleI << " " << lName << endl;
+			outFile << setprecision(2) << fixed;
+			outFile << "Monthly Payment: " << "$" << MONTHLYPAYMENT << endl << endl;
+
+			loanAmount = AM;
+			annualRate12 = annualRate / 12;
+			outFile << setprecision(2) << fixed;
+			MONTHLYPAYMENT = AM * (((annualRate12 * pow(1 + annualRate12, months)) / (pow(1 + annualRate12, months) - 1)));
+			outFile << left << setw(17) << "Payment Number" << setw(15) << "Loan Balance" << setw(17) << "Monthly Payment" << setw(18) << "Interest Amount" << setw(19) << "Principle Amount" << "New Balance" << endl;
+			for (int i = 1; i <= months; i++)
+			{
+				monthlyIA = annualRate12 * loanAmount;
+				principleAmount = MONTHLYPAYMENT - monthlyIA;
+				newBalance = abs(loanAmount - principleAmount);
+				std::cout.imbue(std::locale(""));
+				outFile << left << setw(17) << i << fixed << setprecision(2) << right << setw(12) << loanAmount << setw(18) << MONTHLYPAYMENT << setw(17) << monthlyIA << setw(19) << principleAmount << setw(14) << newBalance << endl;
+				loanAmount = newBalance;
+			}
+
+			outFile.close();
+			cout << "\nYour information is officialy stored in the text file: " << fullName << ".txt" << endl << endl;
+		}
+		else
+		{
+			cout << "\n\n";
+		}
+	}
+	else
+	{
+		cout << "\n";
+	}
+}
+
+//Car Loan Calculator
+void carLoanCalculator()
+{
+	//variables
+	string fName, middleI, lName, fullName, option2;
+	double annualRate, loanAmount, monthlyIA, principleAmount, newBalance, months, amountL, amountP;
+	int years;
+	cout << "Car Loan Calculator \n" << endl;
+	cout << "What is your first name: ";
+	cin >> fName;
+	cout << "What is your middle name/or initial: ";
+	cin >> middleI;
+	cout << "What is your last name: ";
+	cin >> lName;
+	fullName = fName + lName;
+	cout << "\n";
+	cout << "Loan amount: " << "$";
+	cin >> loanAmount;
+	const double LA = loanAmount;
+	cout << "\n";
+	const double AM = loanAmount;
+	cout << "Interest Rate (decimal format): ";
+	cin >> annualRate;
+	while (annualRate > 1 || annualRate < 0)
+	{
+		cout << "Invalid Input. Please enter in decimal format: ";
+		cin >> annualRate;
+	}
+	cout << "\n";
+	cout << "Time period (in years): ";
+	cin >> years;
+	months = years * 12;
+	cout << "\n";
+
+	//Calculations
+	double annualRate12 = annualRate / 12;
+	double MONTHLYPAYMENT = AM * (((annualRate12 * pow(1 + annualRate12, months)) / (pow(1 + annualRate12, months) - 1)));
+
+	std::cout.imbue(std::locale(""));
+	cout << fName << " " << middleI << " " << lName << endl;
+	cout << fixed << setprecision(2);
+	cout << "Car Monthly Payment: " << "$" << MONTHLYPAYMENT << endl << endl;
+	cout << "Would you like to see an amortization table? (y/n) ";
+	cin >> option2;
+	cout << "\n";
+	if (option2 == "y" || option2 == "Y")
+	{
+		cout << left << setw(21) << "Car Payment Number" << setw(20) << "Auto Loan Balance" << setw(22) << "Car Monthly Payment" << setw(23) << "Auto Interest Amount" << setw(19) << "Principle Amount" << "New Car Balance" << endl;
+		for (int i = 1; i <= months; i++)
+		{
+			monthlyIA = annualRate12 * loanAmount;
+			principleAmount = MONTHLYPAYMENT - monthlyIA;
+			newBalance = abs(loanAmount - principleAmount);
+			std::cout.imbue(std::locale(""));
+			cout << left << setw(21) << i << setw(1) << "$" << right << setw(16) << loanAmount << right << setw(4) << "$" << setw(18) << MONTHLYPAYMENT << right << setw(4) << "$" << right << setw(19) << monthlyIA << right << setw(4) << "$" << setw(15) << principleAmount << right << setw(4) << "$" << setw(14) << newBalance << endl;
+			if ((i % 45) == 0)
+			{
+				//the issue is somewhere here
+				cout << endl;
+				system("Pause");
+				cout << "\n";
+				if (i == months)
+					break;
+				cout << left << setw(21) << "Car Payment Number" << setw(20) << "Auto Loan Balance" << setw(22) << "Car Monthly Payment" << setw(23) << "Auto Interest Amount" << setw(19) << "Principle Amount" << "New Car Balance" << endl;
+			}
+			loanAmount = newBalance;
+		}
+
+		amountP = months * MONTHLYPAYMENT;
+		amountL = (months * MONTHLYPAYMENT) - LA;
+
+		cout << endl;
+		cout << "You payed $" << amountP << " and you lost $" << amountL << endl << endl;
+
+		cout << "Do you wish to save this information into a file? (y/n) ";
+		cin >> option2;
+
+		if (option2 == "y" || option2 == "Y")
+		{
+			ofstream outFile;
+			outFile.open(fullName + ".txt");
+			outFile << fName << " " << middleI << " " << lName << endl;
+			outFile << setprecision(2) << fixed;
+			outFile << "Car Monthly Payment: " << "$" << MONTHLYPAYMENT << endl << endl;
+
+			loanAmount = AM;
+			annualRate12 = annualRate / 12;
+			outFile << setprecision(2) << fixed;
+			MONTHLYPAYMENT = AM * (((annualRate12 * pow(1 + annualRate12, months)) / (pow(1 + annualRate12, months) - 1)));
+			outFile << left << setw(21) << "Car Payment Number" << setw(20) << "Auto Loan Balance" << setw(22) << "Car Monthly Payment" << setw(23) << "Auto Interest Amount" << setw(19) << "Principle Amount" << "New Car Balance" << endl;
+			for (int i = 1; i <= months; i++)
+			{
+				double monthlyIA = annualRate12 * loanAmount;
+				double principleAmount = MONTHLYPAYMENT - monthlyIA;
+				double newBalance = abs(loanAmount - principleAmount);
+				std::cout.imbue(std::locale(""));
+				outFile << left << setw(21) << i << fixed << setprecision(2) << right << setw(17) << loanAmount << setw(22) << MONTHLYPAYMENT << setw(23) << monthlyIA << setw(19) << principleAmount << setw(18) << newBalance << endl;
+				loanAmount = newBalance;
+			}
+
+			outFile.close();
+			cout << "\nYour information is officialy stored in the text file: " << fullName << ".txt" << endl << endl;
+		}
+		else
+		{
+			cout << "\n\n";
+		}
+
+	}
+	else
+		cout << "\n";
+}
+
+//Main Menu
+void displayMenu()
+{
+	cout << "Calculator Options: " << endl << endl;
+	cout << "Investment Calculator - 1\n\nFixed-Rate Mortage Loan Calculator - 2\n\nCar Loan Calculator - 3\n\nExit - 4\n" << endl << endl;
+	cout << "Which calculator would you like to select: ";
+}
